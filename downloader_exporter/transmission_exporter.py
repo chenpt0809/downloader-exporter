@@ -20,6 +20,7 @@ class TransmissionMetricsCollector:
         host: str,
         username: str,
         password: str,
+        rewrite: dict = {},
         timeout: int = 60,
         **kwargs,
     ):
@@ -28,7 +29,14 @@ class TransmissionMetricsCollector:
         self.username = username
         self.password = password
         self.timeout = timeout
+        self.rewrite = rewrite
         self.version = None
+
+    def rewrite_tracker(self, tracker):
+        if tracker in self.rewrite:
+            return self.rewrite[tracker]
+        else :
+            return tracker
 
     @property
     def client(self):
@@ -147,6 +155,7 @@ class TransmissionMetricsCollector:
                     "https://unknown.tracker",
                 )
             ).netloc
+            tracker = self.rewrite_tracker(tracker)
             category = "Uncategorized"
             if "labels" in t._fields:
                 category = next((l for l in t._fields["labels"].value), "Uncategorized")

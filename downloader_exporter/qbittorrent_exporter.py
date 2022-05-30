@@ -26,6 +26,7 @@ class QbittorrentMetricsCollector:
         host: str,
         username: str,
         password: str,
+        rewrite: dict = {},
         verify_ssl: bool = False,
         **kwargs,
     ):
@@ -33,8 +34,15 @@ class QbittorrentMetricsCollector:
         self.host = host
         self.username = username
         self.password = password
+        self.rewrite = rewrite
         self.verify_ssl = verify_ssl
 
+    def rewrite_tracker(self, tracker):
+        if tracker in self.rewrite:
+            return self.rewrite[tracker]
+        else :
+            return tracker
+            
     def describe(self):
         return [AttrDict({"name": self.name, "type": "info"})]
 
@@ -139,7 +147,7 @@ class QbittorrentMetricsCollector:
         metrics = []
         counter = Counter()
         for torrent in torrents:
-            tracker = urlparse(torrent.get("tracker", "https://unknown.tracker")).netloc
+            tracker = self.rewrite_tracker(urlparse(torrent.get("tracker", "https://unknown.tracker")).netloc)
             counter[
                 TorrentStat(
                     TorrentStatus.parse_qb(torrent["state"]).value,

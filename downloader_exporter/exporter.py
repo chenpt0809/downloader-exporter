@@ -158,14 +158,22 @@ def main():
     # Register our custom collector
     counter = 0
     logger.info("Exporter is starting up")
+    rewrite = {}
+    for name,c in config.items():
+        if name == 'config':
+            rewrite = c.get('rewrite',{})
+
     for name, c in config.items():
+        if name == 'config':
+            continue
+
         client = c.get('client')
         if client == 'qbittorrent':
-            collector = QbittorrentMetricsCollector(name=name, **c)
+            collector = QbittorrentMetricsCollector(name=name, rewrite=rewrite, **c)
         elif client == 'deluge':
-            collector=DelugeMetricsCollector(name=name, **c)
+            collector = DelugeMetricsCollector(name=name, rewrite=rewrite, **c)
         elif client == 'transmission':
-            collector=TransmissionMetricsCollector(name=name, **c)
+            collector = TransmissionMetricsCollector(name=name, rewrite=rewrite, **c)
         else:
             logger.warning(f"Unsupported client: {client}, config: {c}")
             continue

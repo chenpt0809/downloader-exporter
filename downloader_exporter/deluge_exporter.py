@@ -14,13 +14,20 @@ DEFAULT_PORT = 58846
 
 
 class DelugeMetricsCollector:
-    def __init__(self, name: str, host: str, username: str, password: str, **kwargs):
+    def __init__(self, name: str, host: str, username: str, password: str, rewrite: dict, **kwargs):
         self.name = name
         self.host = host
         self.username = username
         self.password = password
         self.version = ""
         self.lt_version = ""
+        self.rewrite = rewrite
+
+    def rewrite_tracker(self, tracker):
+        if tracker in self.rewrite:
+            return self.rewrite[tracker]
+        else :
+            return tracker
 
     def call(self, client, method, *args, **kwargs):
         try:
@@ -140,7 +147,7 @@ class DelugeMetricsCollector:
         counter = Counter()
         metrics = []
         for torrent_hash, val in torrents.items():
-            tracker = urlparse(val.get("tracker", "https://unknown.tracker")).netloc
+            tracker = self.rewrite_tracker(urlparse(val.get("tracker", "https://unknown.tracker")).netloc)
             counter[
                 TorrentStat(
                     TorrentStatus.parse_de(val.get("state", "")).value,
