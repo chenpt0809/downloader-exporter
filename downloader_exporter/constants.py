@@ -6,17 +6,17 @@ from loguru import logger
 TorrentStat = namedtuple('TorrentStat', ['status', 'category', 'tracker'])
 
 class TorrentStatus(Enum):
-    UNKNOWN         = 'Unknown'
-    ALLOCATING      = 'Allocating'
-    DOWNLOADING     = 'Downloading'
-    UPLOADING       = 'Uploading'
-    COMPLETED       = 'Completed'
-    CHECKING        = 'Checking'
-    ERRORED         = 'Errored'
-    STALLED         = 'Stalled'
-    QUEUED          = 'Queued'
-    PAUSED          = 'Paused'
-    MOVING          = 'Moving'
+    UNKNOWN         = '未知'
+    ALLOCATING      = '分配'
+    DOWNLOADING     = '下载中'
+    UPLOADING       = '上传中'
+    COMPLETED       = '完成'
+    CHECKING        = '校验'
+    ERRORED         = '错误'
+    STALLED         = '等待'
+    QUEUED          = '排队'
+    PAUSED          = '暂停'
+    MOVING          = '移动中'
 
     @staticmethod
     def parse_qb(state: str):
